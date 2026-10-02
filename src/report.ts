@@ -19,6 +19,8 @@ export function scorecard(agent: string, scored: Scored[]): string {
       const worst = s.runs.find((r) => !r.pass)!;
       lines.push(`**${s.scenario.title}**`);
       for (const r of worst.results.filter((x) => !x.pass)) lines.push(`- ${r.name}: ${r.detail}`);
+      const said = worst.trace.finalText;
+      lines.push(`- it said: ${said === null ? "(no final answer)" : `"${said.length > 160 ? said.slice(0, 160) + "…" : said}"`}`);
       lines.push("");
     }
   }
