@@ -73,9 +73,12 @@ export function parseTurn(raw: string): AgentTurn {
   return { type: "malformed", raw };
 }
 
-export function ollamaAgent(model: string, host = "http://127.0.0.1:11434"): Agent {
+export type Sampling = { temperature?: number; seed?: number };
+
+export function ollamaAgent(model: string, host = "http://127.0.0.1:11434", sampling: Sampling = {}): Agent {
+  const { temperature = 0, seed = 7 } = sampling;
   return {
-    name: `ollama:${model}`,
+    name: temperature === 0 ? `ollama:${model}` : `ollama:${model}@t${temperature}`,
     step: async (policy, messages, tools) => {
       const res = await fetch(`${host}/api/chat`, {
         method: "POST",
@@ -84,7 +87,7 @@ export function ollamaAgent(model: string, host = "http://127.0.0.1:11434"): Age
           model,
           stream: false,
           format: schemaFor(tools),
-          options: { temperature: 0, seed: 7 },
+          options: { temperature, seed },
           messages: toChat(systemPrompt(policy, tools), messages),
         }),
       });

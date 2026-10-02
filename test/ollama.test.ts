@@ -82,3 +82,25 @@ test("an Ollama error is thrown, not swallowed as a bad score", async () => {
     server.close();
   }
 });
+
+test("temperature and seed are passed through, and a warm model gets a different name so its results are kept apart", async () => {
+  let sent: any;
+  const server = createServer((req, res) => {
+    let b = "";
+    req.on("data", (d) => (b += d)).on("end", () => {
+      sent = JSON.parse(b);
+      res.end(JSON.stringify({ message: { content: '{"action":"final","answer":"x"}' } }));
+    });
+  });
+  await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
+  try {
+    const agent = ollamaAgent("fake", `http://127.0.0.1:${(server.address() as any).port}`, { temperature: 0.7, seed: 9 });
+    assert.equal(agent.name, "ollama:fake@t0.7");
+    await agent.step("p", [{ role: "user", text: "hi" }], []);
+    assert.equal(sent.options.temperature, 0.7);
+    assert.equal(sent.options.seed, 9);
+    assert.equal(ollamaAgent("fake").name, "ollama:fake");
+  } finally {
+    server.close();
+  }
+});

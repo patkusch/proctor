@@ -15,6 +15,7 @@ function flag(name: string, fallback?: string): string | undefined {
 const kind = flag("agent", "scripted-good")!;
 const model = flag("model", "gemma3")!;
 const repeat = Number(flag("repeat", "1"));
+const temperature = Number(flag("temperature", "0"));
 const only = flag("only");
 const outDir = flag("out");
 const recordDir = flag("record");
@@ -27,13 +28,13 @@ if (chosen.length === 0) {
   process.exit(2);
 }
 
-const label = kind === "ollama" ? `ollama:${model}` : kind;
+const label = kind === "ollama" ? ollamaAgent(model, undefined, { temperature }).name : kind;
 const scored: Scored[] = [];
 for (const scenario of chosen) {
   const runs = [];
   for (let i = 0; i < repeat; i++) {
     let agent: Agent;
-    if (kind === "ollama") agent = ollamaAgent(model);
+    if (kind === "ollama") agent = ollamaAgent(model, undefined, { temperature, seed: 7 + i });
     else if (kind === "scripted-good") agent = scriptedAgent(kind, scenario.good);
     else if (kind === "scripted-bad") agent = scriptedAgent(kind, scenario.bad);
     else {
