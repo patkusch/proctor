@@ -1,5 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { openRecording } from "./record.ts";
 import { ollamaAgent } from "./ollama.ts";
 import { scorecard, type Scored } from "./report.ts";
 import { runScenario, scriptedAgent } from "./runner.ts";
@@ -16,6 +17,9 @@ const model = flag("model", "gemma3")!;
 const repeat = Number(flag("repeat", "1"));
 const only = flag("only");
 const outDir = flag("out");
+const recordDir = flag("record");
+const actaDir = flag("acta", process.env.ACTA_DIR ?? "../acta")!;
+const recording = recordDir ? await openRecording(actaDir, recordDir) : undefined;
 
 const chosen = only ? scenarios.filter((s) => s.id === only) : scenarios;
 if (chosen.length === 0) {
@@ -36,11 +40,21 @@ for (const scenario of chosen) {
       console.error(`unknown agent ${kind}. Use scripted-good, scripted-bad or ollama.`);
       process.exit(2);
     }
-    runs.push(await runScenario(agent, scenario));
+    const session = recording?.session(label, scenario.id, i + 1);
+    try {
+      runs.push(await runScenario(agent, scenario, session));
+    } finally {
+      session?.close();
+    }
   }
   scored.push({ scenario, runs });
   const p = runs.filter((r) => r.pass).length;
   console.log(`${p === runs.length ? "PASS" : "FAIL"} ${p}/${runs.length}  ${scenario.id}`);
+}
+
+if (recording) {
+  console.log(`\nrecorded to ${recording.root}`);
+  console.log(`check one with: acta verify ${recording.root}/${label.replace(/[^a-z0-9.-]+/gi, "-")}/<scenario>-1 --key ${recording.publicKey} --anchors ${recording.anchors}`);
 }
 
 const card = scorecard(label, scored);

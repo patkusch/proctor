@@ -11,8 +11,18 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
+      - uses: actions/checkout@v7
+        with:
+          repository: patkusch/acta
+          path: acta
+      - name: install Acta's one dependency (only the Acta tests need it)
+        run: npm ci --prefix acta
       - name: tests (checks, scenarios, runner, Ollama adapter against a fake server)
-        run: make test
+        run: ACTA_DIR=acta make test
+      - name: a recorded run verifies with Acta (the edit-is-caught case is in the tests)
+        run: |
+          ACTA_DIR=acta node src/cli.ts --agent scripted-good --record /tmp/rec --acta acta > /dev/null
+          node --experimental-strip-types acta/bin/acta.mjs verify /tmp/rec/scripted-good/right-arguments-1 --key /tmp/rec/recorder.pub --anchors /tmp/rec/anchors.jsonl
       - name: a perfect scripted agent passes every scenario
         run: make demo
       - name: a careless scripted agent fails every scenario

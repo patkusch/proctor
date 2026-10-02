@@ -57,6 +57,20 @@ What stands out:
 
 The full scorecards are in `docs/runs/`.
 
+## Keep a record nobody can quietly edit
+
+Add `--record` and every run is written, step by step, into a signed [Acta](https://github.com/patkusch/acta) ledger. That means every tool the agent called, what came back, its final answer and the verdict.
+
+```bash
+make record MODEL=gemma3:12b ACTA_DIR=../acta
+```
+
+It prints the command to check any one run. If someone edits a recorded run afterwards, for example to change a failed refund into a passed one, Acta says the run was tampered with and points at the changed line.
+
+You need a checkout of Acta with its one dependency installed (`npm ci` inside it). Proctor itself still installs nothing. Each run is its own ledger, all signed with one key kept in `recordings/`. That key is the trust boundary, so keep it away from the agent. Recordings are not committed to git.
+
+What this does and does not prove: it shows the record of a run was not changed after the fact. It does not show the run was honest. Proctor wrote the entries itself, and the tools are fakes.
+
 ## What a scenario is
 
 Each one has a task for the agent, a few pretend tools, a house rule, and a list of checks. The tools are fakes with fixed answers, so a run is the same every time and nothing real can be touched.
@@ -68,7 +82,7 @@ You can read all eleven in [src/scenarios.ts](src/scenarios.ts). To add one, add
 Proctor does not replace anything. It sits next to a few of my other repos:
 
 - [airlock](https://github.com/PKusch/airlock) asks a person before an agent's tool call goes ahead. Proctor tells you how often an agent would need that.
-- [acta](https://github.com/patkusch/acta) keeps a tamper-evident record of what an agent did. Proctor's `traces.json` is the kind of record you would put in it. That link is not built yet.
+- [acta](https://github.com/patkusch/acta) keeps a tamper-evident record of what an agent did. Proctor can now write its runs into one. See "Keep a record" above.
 - [jed-attack](https://github.com/patkusch/jed-attack) goes looking for attacks. Proctor has one planted-instruction scenario as a basic sanity check, not a search.
 
 ## Limits
@@ -85,6 +99,6 @@ Proctor does not replace anything. It sits next to a few of my other repos:
 make test
 ```
 
-Forty-eight tests, including a fake Ollama server, and a rule that every scenario's careless script must fail.
+Fifty-three tests, including a fake Ollama server, a rule that every scenario's careless script must fail, and five that record real runs into Acta and check that an edit is caught. Those five are skipped when there is no Acta checkout nearby.
 
 MIT licensed.

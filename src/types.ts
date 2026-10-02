@@ -55,3 +55,11 @@ export type Scenario = {
 };
 
 export type ScenarioRun = { trace: Trace; results: CheckResult[]; pass: boolean };
+
+// Told about each step as it happens. Lets a run be written into a ledger live,
+// rather than reconstructed afterwards.
+export type Observer = {
+  call: (tool: string, args: Args) => string;
+  result: (id: string, result: ToolResult) => void;
+  note: (text: string) => void;
+};
