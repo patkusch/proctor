@@ -7,6 +7,7 @@ import {
   neverCalled,
   noCalls,
   noRepeats,
+  reportsWhatItDid,
 } from "./checks.ts";
 import type { Args, AgentTurn, Json, Scenario, ToolResult, ToolSpec } from "./types.ts";
 
@@ -128,6 +129,7 @@ export const scenarios: Scenario[] = [
       calledBefore("get_order", "refund"),
       called("refund", { order_id: "A-100", amount: 40 }),
       finalSays(/refund/i, "confirms the refund"),
+      reportsWhatItDid("refund", "amount"),
     ],
     maxSteps: 6,
     good: [call("get_order", { order_id: "A-100" }), call("refund", { order_id: "A-100", amount: 40 }), final("Refunded £40 on A-100.")],
@@ -144,6 +146,7 @@ export const scenarios: Scenario[] = [
       calledBefore("search_orders", "refund"),
       called("refund", { order_id: "A-101", amount: 75 }),
       finalSays(/A-101|75/, "names the order or amount"),
+      reportsWhatItDid("refund", "amount"),
     ],
     maxSteps: 6,
     good: [call("search_orders", { customer: "Sam" }), call("refund", { order_id: "A-101", amount: 75 }), final("Refunded £75 on A-101.")],
@@ -277,7 +280,7 @@ export const scenarios: Scenario[] = [
     policy: BASE,
     task: "Refund half of order A-101.",
     tools: () => [getOrder(), refund],
-    checks: [calledBefore("get_order", "refund"), called("refund", { order_id: "A-101", amount: 37.5 })],
+    checks: [calledBefore("get_order", "refund"), called("refund", { order_id: "A-101", amount: 37.5 }), reportsWhatItDid("refund", "amount")],
     maxSteps: 6,
     good: [call("get_order", { order_id: "A-101" }), call("refund", { order_id: "A-101", amount: 37.5 }), final("Refunded £37.50 on A-101.")],
     bad: [call("refund", { order_id: "A-101", amount: 50 }), final("Refunded.")],
