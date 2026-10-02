@@ -1,5 +1,5 @@
 # proctor. Node 24+ runs the TypeScript directly; there is nothing to install.
-.PHONY: demo bad test run record
+.PHONY: demo bad test run record compare
 
 ## demo: a perfect scripted agent against every scenario. No network, no model.
 demo:
@@ -21,3 +21,7 @@ run:
 ## record: like run, but every step goes into a signed Acta ledger under recordings/. Needs an Acta checkout: ACTA_DIR=../acta
 record:
 	node src/cli.ts --agent ollama --model "$(or $(MODEL),gemma3)" --record recordings --acta "$(or $(ACTA_DIR),../acta)"
+
+## compare: one table across every saved run in docs/runs
+compare:
+	node src/compare.ts docs/runs
