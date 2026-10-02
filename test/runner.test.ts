@@ -50,7 +50,7 @@ test("argument matching ignores case and number-vs-string", async () => {
     scriptedAgent("a", [
       { type: "call", tool: "get_order", args: { order_id: "a-100" } },
       { type: "call", tool: "refund", args: { order_id: "A-100", amount: "40" } },
-      { type: "final", text: "Refund done" },
+      { type: "final", text: "Refund done: £40" },
     ]),
     s,
   );
