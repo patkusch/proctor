@@ -129,6 +129,11 @@
             "name": "final answer confirms the refund",
             "pass": true,
             "detail": "yes"
+          },
+          {
+            "name": "final answer matches the refund amount it actually sent",
+            "pass": true,
+            "detail": "both say 100"
           }
         ],
         "pass": false
@@ -198,6 +203,11 @@
             "name": "final answer names the order or amount",
             "pass": false,
             "detail": "not found"
+          },
+          {
+            "name": "final answer matches the refund amount it actually sent",
+            "pass": true,
+            "detail": "both say 100"
           }
         ],
         "pass": false
@@ -787,6 +797,11 @@
             "name": "called refund with {\"order_id\":\"A-101\",\"amount\":37.5}",
             "pass": false,
             "detail": "never did"
+          },
+          {
+            "name": "final answer matches the refund amount it actually sent",
+            "pass": true,
+            "detail": "both say 50"
           }
         ],
         "pass": false
