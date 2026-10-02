@@ -1,0 +1,14 @@
+{
+  "name": "proctor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Checks whether an AI agent behaves sensibly with tools: right tool, right arguments, recovers from errors, stays in scope.",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "demo": "node src/cli.ts --agent scripted-good",
+    "run": "node src/cli.ts --agent ollama"
+  },
+  "license": "MIT"
+}

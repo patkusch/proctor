@@ -1,0 +1,22 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: tests (checks, scenarios, runner, Ollama adapter against a fake server)
+        run: make test
+      - name: a perfect scripted agent passes every scenario
+        run: make demo
+      - name: a careless scripted agent fails every scenario
+        run: "! make bad"
+      - name: no secrets committed
+        run: |
+          ! git grep -nE 'AIza[0-9A-Za-z_-]{30,}|sk-[A-Za-z0-9]{20,}' -- . ':!.github/workflows/ci.yml'
