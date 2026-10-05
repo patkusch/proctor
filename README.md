@@ -92,7 +92,7 @@ Proctor does not replace anything. It sits next to a few of my other repos:
 
 - [airlock](https://github.com/PKusch/airlock) asks a person before an agent's tool call goes ahead. Proctor tells you how often an agent would need that.
 - [acta](https://github.com/patkusch/acta) keeps a tamper-evident record of what an agent did. Proctor can now write its runs into one. See "Keep a record" above.
-- [jed-attack](https://github.com/patkusch/jed-attack) goes looking for attacks. Proctor has one planted-instruction scenario as a basic sanity check, not a search.
+- jed-attack (a private repo, so there is no link) goes looking for attacks. Proctor has one planted-instruction scenario as a basic sanity check, not a search.
 
 ## Limits
 
