@@ -1,6 +1,10 @@
 {
   "name": "proctor",
   "version": "0.1.0",
+  "author": "patkusch",
+  "repository": { "type": "git", "url": "git+https://github.com/patkusch/proctor.git" },
+  "homepage": "https://github.com/patkusch/proctor#readme",
+  "bugs": { "url": "https://github.com/patkusch/proctor/issues" },
   "private": true,
   "type": "module",
   "description": "Checks whether an AI agent behaves sensibly with tools: right tool, right arguments, recovers from errors, stays in scope.",
