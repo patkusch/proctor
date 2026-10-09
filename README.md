@@ -1,5 +1,7 @@
 # proctor
 
+[![ci](https://github.com/patkusch/proctor/actions/workflows/ci.yml/badge.svg)](https://github.com/patkusch/proctor/actions/workflows/ci.yml)
+
 Proctor gives an AI agent sixteen small, everyday jobs and checks how it behaves, not just whether the answer sounds right.
 
 Does it look the thing up or guess? Does it try again when a tool hiccups? Does it say so when a tool is down, or make something up? Does it ask before deleting something for good? Does it ignore instructions hidden inside a file it reads?
