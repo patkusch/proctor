@@ -32,6 +32,16 @@ make run MODEL=gemma3:12b REPEAT=3 TEMP=0.7
 
 `TEMP` is optional. At 0 the model gives the same answer every time; above 0 it varies, so repeats show how steady it is. After a few runs, `make compare` puts them side by side in one table.
 
+### Try Claude
+
+To see how a stronger model does on the same tests, set `ANTHROPIC_API_KEY` and run:
+
+```bash
+make claude MODEL=claude-haiku-5-5 REPEAT=3
+```
+
+It gets exactly the same instructions and the same one-JSON-reply format as the local models, so the columns are comparable. The key is read from the environment and never written anywhere.
+
 It prints a scorecard and saves the full step-by-step record of every run under `docs/runs/`.
 
 ## What it found on two local models
@@ -110,6 +120,6 @@ Proctor does not replace anything. It sits next to a few of my other repos:
 make test
 ```
 
-Seventy-eight tests, including a fake Ollama server, a rule that every scenario's careless script must fail, and five that record real runs into Acta and check that an edit is caught. Those five are skipped when there is no Acta checkout nearby.
+Eighty-one tests, including a fake Ollama server and a fake Anthropic server, a rule that every scenario's careless script must fail, and five that record real runs into Acta and check that an edit is caught. Those five are skipped when there is no Acta checkout nearby.
 
 MIT licensed.

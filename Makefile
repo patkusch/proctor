@@ -1,5 +1,5 @@
 # proctor. Node 24+ runs the TypeScript directly; there is nothing to install.
-.PHONY: demo bad test run record compare
+.PHONY: demo bad test run claude record compare
 
 ## demo: a perfect scripted agent against every scenario. No network, no model.
 demo:
@@ -17,6 +17,10 @@ test:
 ## TEMP above 0 makes the model vary, so repeats show how steady it is.
 run:
 	node src/cli.ts --agent ollama --model "$(or $(MODEL),gemma3)" --repeat "$(or $(REPEAT),1)" --temperature "$(or $(TEMP),0)" --out docs/runs
+
+## claude: the same tests on Claude. Needs ANTHROPIC_API_KEY. make claude MODEL=claude-haiku-5-5 REPEAT=3
+claude:
+	node src/cli.ts --agent claude --model "$(or $(MODEL),claude-haiku-5-5)" --repeat "$(or $(REPEAT),1)" --temperature "$(or $(TEMP),0)" --out docs/runs
 
 ## record: like run, but every step goes into a signed Acta ledger under recordings/. Needs an Acta checkout: ACTA_DIR=../acta
 record:

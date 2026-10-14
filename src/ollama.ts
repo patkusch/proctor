@@ -17,7 +17,7 @@ function schemaFor(tools: ToolSpec[]) {
   };
 }
 
-function systemPrompt(policy: string, tools: ToolSpec[]): string {
+export function systemPrompt(policy: string, tools: ToolSpec[]): string {
   const list = tools
     .map((t) => `- ${t.name}(${Object.entries(t.params).map(([k, v]) => `${k}: ${v}`).join(", ")}): ${t.description}`)
     .join("\n");
@@ -33,7 +33,7 @@ function systemPrompt(policy: string, tools: ToolSpec[]): string {
   ].join("\n");
 }
 
-function toChat(system: string, messages: Message[]) {
+export function toChat(system: string, messages: Message[]) {
   const out: { role: string; content: string }[] = [{ role: "system", content: system }];
   for (const m of messages) {
     if (m.role === "user") out.push({ role: "user", content: m.text });

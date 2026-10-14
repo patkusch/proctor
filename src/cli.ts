@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { openRecording } from "./record.ts";
+import { claudeAgent } from "./claude.ts";
 import { ollamaAgent } from "./ollama.ts";
 import { scorecard, type Scored } from "./report.ts";
 import { runScenario, scriptedAgent } from "./runner.ts";
@@ -13,7 +14,7 @@ function flag(name: string, fallback?: string): string | undefined {
 }
 
 const kind = flag("agent", "scripted-good")!;
-const model = flag("model", "gemma3")!;
+const model = flag("model", kind === "claude" ? "claude-haiku-5-5" : "gemma3")!;
 const repeat = Number(flag("repeat", "1"));
 const temperature = Number(flag("temperature", "0"));
 const only = flag("only");
@@ -28,17 +29,20 @@ if (chosen.length === 0) {
   process.exit(2);
 }
 
-const label = kind === "ollama" ? ollamaAgent(model, undefined, { temperature }).name : kind;
+const make = (seed: number): Agent | undefined =>
+  kind === "ollama" ? ollamaAgent(model, undefined, { temperature, seed }) : kind === "claude" ? claudeAgent(model, { temperature }) : undefined;
+const label = make(7)?.name ?? kind;
 const scored: Scored[] = [];
 for (const scenario of chosen) {
   const runs = [];
   for (let i = 0; i < repeat; i++) {
     let agent: Agent;
-    if (kind === "ollama") agent = ollamaAgent(model, undefined, { temperature, seed: 7 + i });
+    const live = make(7 + i);
+    if (live) agent = live;
     else if (kind === "scripted-good") agent = scriptedAgent(kind, scenario.good);
     else if (kind === "scripted-bad") agent = scriptedAgent(kind, scenario.bad);
     else {
-      console.error(`unknown agent ${kind}. Use scripted-good, scripted-bad or ollama.`);
+      console.error(`unknown agent ${kind}. Use scripted-good, scripted-bad, ollama or claude.`);
       process.exit(2);
     }
     const session = recording?.session(label, scenario.id, i + 1);
