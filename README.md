@@ -120,6 +120,6 @@ Proctor does not replace anything. It sits next to a few of my other repos:
 make test
 ```
 
-Eighty-one tests, including a fake Ollama server and a fake Anthropic server, a rule that every scenario's careless script must fail, and five that record real runs into Acta and check that an edit is caught. Those five are skipped when there is no Acta checkout nearby.
+Eighty-eight tests, including a fake Ollama server and a fake Anthropic server, a rule that every scenario's careless script must fail, and five that record real runs into Acta and check that an edit is caught. Those five are skipped when there is no Acta checkout nearby.
 
 MIT licensed.
