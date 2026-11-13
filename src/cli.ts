@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { openRecording } from "./record.ts";
 import { claudeAgent } from "./claude.ts";
@@ -11,6 +11,12 @@ import type { Agent } from "./types.ts";
 function flag(name: string, fallback?: string): string | undefined {
   const i = process.argv.indexOf(`--${name}`);
   return i >= 0 ? process.argv[i + 1] : fallback;
+}
+
+if (process.argv.includes("--version")) {
+  const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as { version: string };
+  console.log(`proctor ${pkg.version}`);
+  process.exit(0);
 }
 
 const kind = flag("agent", "scripted-good")!;
